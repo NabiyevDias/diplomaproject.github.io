@@ -1,2 +1,2 @@
-# diplomaproject.github.io
+# SALAM
 Messenger project
