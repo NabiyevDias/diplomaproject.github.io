@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Messenger</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="chat-box" id="chat-box">
+            <!-- Messages will be dynamically added here -->
+        </div>
+        <form action="#" method="post" class="chat-form" id="chat-form">
+            <input type="text" name="content" placeholder="Message" required class="input-field" id="message-input">
+            <button type="submit" class="send-button" id="send-button">Send</button>
+        </form>
+    </div>
+    <script>
+        // JavaScript for fetching and displaying messages
+        setInterval(function() {
+            fetch('/messages')
+                .then(response => response.json())
+                .then(data => {
+                    const chatBox = document.getElementById('chat-box');
+                    chatBox.innerHTML = '';
+                    data.forEach(msg => {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'message';
+                        msgDiv.innerHTML = '<span class="username">' + msg.Username + ':</span> ' + msg.Content;
+                        chatBox.appendChild(msgDiv);
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+        }, 1000);
+
+        // JavaScript for sending messages
+        document.getElementById('chat-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const messageInput = document.getElementById('message-input');
+            const content = messageInput.value;
+            messageInput.value = ''; // Clear input field after sending message
+
+            fetch('/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
